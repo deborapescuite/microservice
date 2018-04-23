@@ -1,0 +1,1 @@
+insert into tbl_product (name,short_description,long_description,unit_value) values('pencil','blue pencil','blue pencil for special ocasions',25.5)
