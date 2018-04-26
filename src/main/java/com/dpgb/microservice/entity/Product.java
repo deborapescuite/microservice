@@ -1,6 +1,9 @@
 package com.dpgb.microservice.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 @Entity
@@ -10,13 +13,14 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column
+    @NotNull(message="Name can't be null")
+    @NotEmpty(message="Name can't be empty")
     private String name;
-    @Column
+    @NotNull
     private String shortDescription;
-    @Column
     private String longDescription;
-    @Column
+    @NotNull
+    @Size(min=0, message = "UnitValue should be greater than 0")
     private Double unitValue;
 
     public Integer getId() {
