@@ -3,7 +3,7 @@ package com.dpgb.microservice.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Positive;
 
 
 @Entity
@@ -20,7 +20,7 @@ public class Product {
     private String shortDescription;
     private String longDescription;
     @NotNull
-    @Size(min=0, message = "UnitValue should be greater than 0")
+    @Positive(message = "UnitValue should be a positive number")
     private Double unitValue;
 
     public Integer getId() {

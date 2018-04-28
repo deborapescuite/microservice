@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-
 public class ProductController {
     private static final Logger logger = LogManager.getLogger(ProductController.class);
 
@@ -28,27 +28,31 @@ public class ProductController {
         if (optional.isPresent())
             return optional.get();
         else
-            throw new ProductNotFoundException("Product id:" + id + "not found.");
+            throw new ProductNotFoundException("Product id: " + id + " not found.");
     }
 
-    @RequestMapping(method = GET, value = "/products/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = GET, value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping(path="/products/{id}")
     public void deleteProduct(@PathVariable Integer id) {
         productRepository.deleteById(id);
     }
 
-    @PutMapping("/products/{id}")
-    public Product updateProduct()
+    @PutMapping(path ="/products/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public Product updateProduct(@PathVariable Integer id,@Valid @RequestBody Product updateProduct)
     {
-        //to do update
-        return new Product();
+        if(productRepository.findById(id).isPresent())
+        return productRepository.save(updateProduct);
+        else
+            throw new ProductNotFoundException("Product id: " + id + " not found.");
     }
 
-
-    //to do post (create)
+    @PostMapping(path ="/products",produces = MediaType.APPLICATION_JSON_VALUE)
+    public void createProduct(@Valid @RequestBody Product createProduct){
+        productRepository.save(createProduct);
+    }
 
 }

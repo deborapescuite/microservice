@@ -1,28 +1,74 @@
 package com.dpgb.microservice.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
-public class Order
-{
+@Table(name = "tbl_order")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull
+    @OneToOne
     private User creatorUser;
+    @OneToMany
+    private List<Product> product;
     @NotNull
-    private Product product;
-    @NotNull
-    @Size(min=0, message = "Quantity should be greater than 0")
+    @Size(min = 0, message = "Quantity should be greater than 0")
     private Integer quantity;
     @NotNull
-    @Size(min=0, message = "Price should be greater than 0")
+    @Size(min = 0, message = "Price should be greater than 0")
     private Double price;
     private LocalTime creationDate;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getCreatorUser() {
+        return creatorUser;
+    }
+
+    public void setCreatorUser(User creatorUser) {
+        this.creatorUser = creatorUser;
+    }
+
+    public List<Product> getProduct() {
+        return product;
+    }
+
+    public void setProduct(List<Product> product) {
+        this.product = product;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public LocalTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalTime creationDate) {
+        this.creationDate = creationDate;
+    }
 }

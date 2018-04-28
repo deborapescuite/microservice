@@ -1,13 +1,11 @@
 package com.dpgb.microservice.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 @Entity
+@Table(name="tbl_user")
 public class User {
 
     @Id
@@ -16,7 +14,7 @@ public class User {
     @NotNull
     private String name;
     private LocalTime creationDate;
-    @NotNull
+    @OneToOne
     private UserRole role;
 
     public Integer getId() {
