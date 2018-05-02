@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class ProductController {
@@ -36,22 +36,21 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    @DeleteMapping(path="/products/{id}")
+    @RequestMapping(method = DELETE, value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteProduct(@PathVariable Integer id) {
         productRepository.deleteById(id);
     }
 
-    @PutMapping(path ="/products/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product updateProduct(@PathVariable Integer id,@Valid @RequestBody Product updateProduct)
-    {
-        if(productRepository.findById(id).isPresent())
-        return productRepository.save(updateProduct);
+    @RequestMapping(method = PUT, value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Product updateProduct(@PathVariable Integer id, @Valid @RequestBody Product updateProduct) {
+        if (productRepository.findById(id).isPresent())
+            return productRepository.save(updateProduct);
         else
             throw new ProductNotFoundException("Product id: " + id + " not found.");
     }
 
-    @PostMapping(path ="/products",produces = MediaType.APPLICATION_JSON_VALUE)
-    public void createProduct(@Valid @RequestBody Product createProduct){
+    @RequestMapping(method = POST, value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void createProduct(@Valid @RequestBody Product createProduct) {
         productRepository.save(createProduct);
     }
 

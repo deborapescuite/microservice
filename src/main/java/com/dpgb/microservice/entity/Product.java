@@ -47,7 +47,7 @@ public class Product {
         this.shortDescription = shortDescription;
     }
 
-    public String getLongDescription() {
+    public String getLongDescription(String s) {
         return longDescription;
     }
 
