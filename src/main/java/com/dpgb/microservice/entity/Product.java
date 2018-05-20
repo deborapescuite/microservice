@@ -8,17 +8,17 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name="tbl_product")
+@Table(name = "tbl_product")
 public class Product {
 
     @Id
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull(message="Name can't be null")
-    @NotEmpty(message="Name can't be empty")
+    @NotNull(message = "Name can't be null")
+    @NotEmpty(message = "Name can't be empty")
     private String name;
-    @NotNull
+    @NotNull(message = "Short description can't be empty")
     private String shortDescription;
     private String longDescription;
     @NotNull

@@ -1,8 +1,9 @@
 package com.dpgb.microservice.controller;
 
-import com.dpgb.microservice.entity.Product;
+import com.dpgb.microservice.entity.User;
 import com.dpgb.microservice.repository.AuditRepository;
-import com.dpgb.microservice.repository.ProductRepository;
+import com.dpgb.microservice.repository.UserRepository;
+import com.dpgb.microservice.utils.UserType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.Mockito.doNothing;
@@ -25,95 +29,95 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(ProductController.class)
-public class ProductControllerTest {
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @MockBean
-    ProductRepository productRepository;
+    UserRepository userRepository;
 
     @MockBean
     AuditRepository auditRepository;
 
     ObjectMapper mapper = new ObjectMapper();
 
-    private Product product;
+    private User user;
 
     @Before
     public void setUp() {
-        product = new Product();
-        product.setId(1);
-        product.setName("Paper");
-        product.setShortDescription("White paper");
-        product.setLongDescription("Whiter paper for school projects");
-        product.setUnitValue(1.25);
+        user = new User();
+        user.setId(1);
+        user.setName("User1");
+        user.setCreateDate(new Date());
+        //user.setCreationDate(LocalDateTime.now());
+        user.setUserType(UserType.ADMIN);
+    }
 
+    public byte[] serializeUser(User user) throws JsonProcessingException {
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper.writeValueAsBytes(user);
     }
 
     @Test
-    public void createProductWithSuccess() throws Exception {
+    public void createUser() throws Exception {
 
-        mvc.perform(post("/products")
+        mvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeProducts(this.product)))
+                .content(serializeUser(this.user)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     public void createProductWithError() throws Exception {
-        Product emptyProduct = new Product();
+        User emptyUser = new User();
 
-        mvc.perform(post("/products")
+        mvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeProducts(emptyProduct)))
+                .content(serializeUser(emptyUser)))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void updateProduct() throws Exception {
+    public void updateUser() throws Exception {
 
-        when(productRepository.findById(1)).thenReturn(Optional.of(this.product));
+        when(userRepository.findById(1)).thenReturn(Optional.of(this.user));
 
         mvc.perform(
-                put("/products/{id}", 1)
+                put("/user/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(serializeProducts(this.product)))
+                        .content(serializeUser(this.user)))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    public void getProduct() throws Exception {
-        when(productRepository.findById(1)).thenReturn(Optional.of(this.product));
+    public void getUser() throws Exception {
+        when(userRepository.findById(1)).thenReturn(Optional.of(this.user));
 
-        mvc.perform(get("/products/{id}", 1)
+        mvc.perform(get("/user/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(this.product.getId()))
-                .andExpect(jsonPath("$.name").value("Paper"))
-                .andExpect(jsonPath("$.shortDescription").value("White paper"));
+                .andExpect(jsonPath("$.id").value(this.user.getId()))
+                .andExpect(jsonPath("$.name").value("User1"))
+                .andExpect(jsonPath("$.userType").value(UserType.ADMIN.toJson()));
     }
 
-    public byte[] serializeProducts(Product product) throws JsonProcessingException {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper.writeValueAsBytes(product);
-    }
 
     @Test
-    public void getAllProducts() throws Exception {
-        mvc.perform(get("/products")
+    public void getAllUsers() throws Exception {
+        mvc.perform(get("/user")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void deleteProduct() throws Exception {
-        when(productRepository.findById(1)).thenReturn(Optional.of(this.product));
-        doNothing().when(productRepository).deleteById(this.product.getId());
+    public void deleteUser() throws Exception {
+        when(userRepository.findById(1)).thenReturn(Optional.of(this.user));
+        doNothing().when(userRepository).deleteById(this.user.getId());
 
         mvc.perform(
-                delete("/products/{id}", this.product.getId())
+                delete("/user/{id}", this.user.getId())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
     }

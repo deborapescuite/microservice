@@ -1,6 +1,7 @@
 package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.exception.ProductNotFoundException;
+import com.dpgb.microservice.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @RestController
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler({ProductNotFoundException.class, UserNotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFound(Exception ex) {
         ErrorDetail errorDetail = new ErrorDetail(ex.getMessage(), HttpStatus.NOT_FOUND.toString());
         return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);

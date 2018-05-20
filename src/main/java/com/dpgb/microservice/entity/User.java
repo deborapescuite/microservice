@@ -1,21 +1,24 @@
 package com.dpgb.microservice.entity;
 
+import com.dpgb.microservice.utils.UserType;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
-@Table(name="tbl_user")
+@Table(name = "tbl_user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull
+    @NotNull(message = "Name can't be empty")
     private String name;
-    private LocalTime creationDate;
-    @OneToOne
-    private UserRole role;
+    private Date createDate;
+    @NotNull(message = "User type can't be empty")
+    private UserType userType;
 
     public Integer getId() {
         return id;
@@ -33,19 +36,34 @@ public class User {
         this.name = name;
     }
 
-    public LocalTime getCreationDate() {
-        return creationDate;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setCreationDate(LocalTime creationDate) {
-        this.creationDate = creationDate;
+    public void setUserType(UserType role) {
+        this.userType = role;
     }
 
-    public UserRole getRole() {
-        return role;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
