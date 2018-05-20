@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.Objects;
 
 
 @Entity
@@ -11,6 +12,7 @@ import javax.validation.constraints.Positive;
 public class Product {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull(message="Name can't be null")
@@ -61,5 +63,19 @@ public class Product {
 
     public void setUnitValue(Double unitValue) {
         this.unitValue = unitValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }
