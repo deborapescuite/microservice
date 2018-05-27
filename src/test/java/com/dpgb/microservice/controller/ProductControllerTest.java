@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
@@ -54,11 +55,12 @@ public class ProductControllerTest {
 
     @Test
     public void createProductWithSuccess() throws Exception {
-
-        mvc.perform(post("/products")
+        when(productRepository.save(this.product)).thenReturn(this.product);
+         mvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializeProducts(this.product)))
                 .andExpect(status().isCreated());
+
     }
 
     @Test

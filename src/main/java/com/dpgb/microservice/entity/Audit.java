@@ -17,7 +17,7 @@ public class Audit {
     private Integer entityId;
     @NotNull(message = "Action date can't be empty")
     private LocalTime actionDate;
-    @NotNull(message = "User ID can't be empty")
+    //@NotNull(message = "User ID can't be empty")
     private Integer userId;
 
     public Audit(@NotNull(message = "Action can't be empty") String action, @NotNull(message = "Entity id can't be empty") Integer entityId, @NotNull(message = "Action date can't be empty") LocalTime actionDate, @NotNull(message = "User ID can't be empty") Integer userId) {

@@ -1,6 +1,7 @@
 package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.Audit;
+import com.dpgb.microservice.entity.Product;
 import com.dpgb.microservice.entity.User;
 import com.dpgb.microservice.exception.ProductNotFoundException;
 import com.dpgb.microservice.exception.UserNotFoundException;
@@ -9,11 +10,15 @@ import com.dpgb.microservice.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -74,9 +79,20 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@Valid @RequestBody User createUser) {
+    public  ResponseEntity<User>  createUser(@Valid @RequestBody User createUser, UriComponentsBuilder ucb) {
         logger.info("CREATE/POST  a new user.");
-        userRepository.save(createUser);
+        User newUser = userRepository.save(createUser);
+
+        HttpHeaders headers = new HttpHeaders();
+        URI locationUri =
+                ucb.path("/user/")
+                        .path(String.valueOf(newUser.getId()))
+                        .build()
+                        .toUri();
+        headers.setLocation(locationUri);
+        ResponseEntity<User> responseEntity =
+                new ResponseEntity<User>(
+                        newUser, headers, HttpStatus.CREATED);
+        return responseEntity;
     }
 }

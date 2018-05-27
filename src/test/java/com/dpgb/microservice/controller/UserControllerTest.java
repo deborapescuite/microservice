@@ -51,7 +51,6 @@ public class UserControllerTest {
         user.setId(1);
         user.setName("User1");
         user.setCreateDate(new Date());
-        //user.setCreationDate(LocalDateTime.now());
         user.setUserType(UserType.ADMIN);
     }
 
@@ -62,7 +61,7 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-
+        when(userRepository.save(this.user)).thenReturn(this.user);
         mvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializeUser(this.user)))

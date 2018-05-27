@@ -8,11 +8,15 @@ import com.dpgb.microservice.repository.ProductRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -73,10 +77,21 @@ public class ProductController {
     }
 
     @RequestMapping(method = POST, value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createProduct(@Valid @RequestBody Product createProduct) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product createProduct,UriComponentsBuilder ucb) {
         logger.info("CREATE/POST  a new product.");
-        productRepository.save(createProduct);
+        Product product = productRepository.save(createProduct);
+
+        HttpHeaders headers = new HttpHeaders();
+        URI locationUri =
+                ucb.path("/products/")
+                        .path(String.valueOf(product.getId()))
+                        .build()
+                        .toUri();
+        headers.setLocation(locationUri);
+        ResponseEntity<Product> responseEntity =
+                new ResponseEntity<Product>(
+                        product, headers, HttpStatus.CREATED);
+        return responseEntity;
     }
 
 }
