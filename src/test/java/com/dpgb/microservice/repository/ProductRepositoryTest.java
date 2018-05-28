@@ -26,9 +26,9 @@ public class ProductRepositoryTest {
     public void createAndFindProductTest() {
         Product product = new Product();
         product.setName("Pencil");
-        product.setShortDescription("Faber Castel Pencil");
-        product.getLongDescription("Nice pencil for drawing things!");
+        product.setDescription("Faber Castel Pencil");
         product.setUnitValue(3.5d);
+        product.setQuantity(1);
 
         Integer id = productRepository.save(product).getId();
 
@@ -42,9 +42,9 @@ public class ProductRepositoryTest {
     public void updateProductTest() {
         Product product = new Product();
         product.setName("Pen");
-        product.setShortDescription("Red pen");
-        product.getLongDescription("Red pen for correct tests.");
+        product.setDescription("Red pen");
         product.setUnitValue(1.25d);
+        product.setQuantity(1);
 
         Integer productId = productRepository.save(product).getId();
 
@@ -59,9 +59,9 @@ public class ProductRepositoryTest {
     public void deleteProductTest() {
         Product product = new Product();
         product.setName("Scissor");
-        product.setShortDescription("Basic Scissor");
-        product.getLongDescription("Scissor to cut paper.");
+        product.setDescription("Basic Scissor");
         product.setUnitValue(10.59d);
+        product.setQuantity(1);
 
         productRepository.save(product);
 

@@ -2,8 +2,7 @@ package com.dpgb.microservice.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -12,17 +11,13 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne
-    private User creatorUser;
+    @NotNull
+    private Integer userID;
     @OneToMany
-    private List<Product> product;
+    private List<Product> productList;
+    private Double totalPrice;
     @NotNull
-    @Size(min = 0, message = "Quantity should be greater than 0")
-    private Integer quantity;
-    @NotNull
-    @Size(min = 0, message = "Price should be greater than 0")
-    private Double price;
-    private LocalTime creationDate;
+    private Date creationDate;
 
     public Integer getId() {
         return id;
@@ -32,43 +27,35 @@ public class Order {
         this.id = id;
     }
 
-    public User getCreatorUser() {
-        return creatorUser;
+    public Integer getUserID() {
+        return userID;
     }
 
-    public void setCreatorUser(User creatorUser) {
-        this.creatorUser = creatorUser;
+    public void setUserID(Integer userID) {
+        this.userID = userID;
     }
 
-    public List<Product> getProduct() {
-        return product;
+    public List<Product> getProductList() {
+        return productList;
     }
 
-    public void setProduct(List<Product> product) {
-        this.product = product;
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public LocalTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 

@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
@@ -47,9 +46,9 @@ public class ProductControllerTest {
         product = new Product();
         product.setId(1);
         product.setName("Paper");
-        product.setShortDescription("White paper");
-        product.setLongDescription("Whiter paper for school projects");
+        product.setDescription("Whiter paper for school projects");
         product.setUnitValue(1.25);
+        product.setQuantity(1);
 
     }
 
@@ -94,7 +93,7 @@ public class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(this.product.getId()))
                 .andExpect(jsonPath("$.name").value("Paper"))
-                .andExpect(jsonPath("$.shortDescription").value("White paper"));
+                .andExpect(jsonPath("$.description").value("Whiter paper for school projects"));
     }
 
     public byte[] serializeProducts(Product product) throws JsonProcessingException {

@@ -12,18 +12,18 @@ import java.util.Objects;
 public class Product {
 
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull(message = "Name can't be null")
     @NotEmpty(message = "Name can't be empty")
     private String name;
-    @NotNull(message = "Short description can't be empty")
-    private String shortDescription;
-    private String longDescription;
+    private String description;
     @NotNull
     @Positive(message = "UnitValue should be a positive number")
     private Double unitValue;
+    @NotNull
+    @Positive(message = "Quantity should be a positive number")
+    private Integer quantity;
 
     public Integer getId() {
         return id;
@@ -41,20 +41,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getShortDescription() {
-        return shortDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getLongDescription(String s) {
-        return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getUnitValue() {
@@ -63,6 +55,14 @@ public class Product {
 
     public void setUnitValue(Double unitValue) {
         this.unitValue = unitValue;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override
