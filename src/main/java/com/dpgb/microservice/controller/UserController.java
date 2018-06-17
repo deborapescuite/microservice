@@ -53,7 +53,7 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @RequestMapping(method = DELETE, value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = DELETE, value = "/user/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer id) {
         logger.info("DELETE  a user with id: " + id);

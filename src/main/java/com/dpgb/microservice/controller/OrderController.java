@@ -52,7 +52,7 @@ public class OrderController {
         return orderRepository.findAll();
     }
 
-    @RequestMapping(method = DELETE, value = "/order/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = DELETE, value = "/order/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder(@PathVariable Integer id) {
         logger.info("DELETE  a order with id: " + id);

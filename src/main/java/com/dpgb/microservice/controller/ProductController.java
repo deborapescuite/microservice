@@ -51,7 +51,7 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    @RequestMapping(method = DELETE, value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = DELETE, value = "/products/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Integer id) {
         logger.info("DELETE  a product with id: " + id);
