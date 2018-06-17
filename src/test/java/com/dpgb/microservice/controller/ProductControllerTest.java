@@ -2,7 +2,7 @@ package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.Product;
 import com.dpgb.microservice.repository.AuditRepository;
-import com.dpgb.microservice.repository.ProductRepository;
+import com.dpgb.microservice.service.ProductService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,10 +32,7 @@ public class ProductControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    ProductRepository productRepository;
-
-    @MockBean
-    AuditRepository auditRepository;
+    ProductService productService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -54,7 +51,7 @@ public class ProductControllerTest {
 
     @Test
     public void createProductWithSuccess() throws Exception {
-        when(productRepository.save(this.product)).thenReturn(this.product);
+        when(productService.save(this.product)).thenReturn(this.product);
          mvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializeProducts(this.product)))
@@ -75,7 +72,7 @@ public class ProductControllerTest {
     @Test
     public void updateProduct() throws Exception {
 
-        when(productRepository.findById(1)).thenReturn(Optional.of(this.product));
+        when(productService.findById(1)).thenReturn(this.product);
 
         mvc.perform(
                 put("/products/{id}", 1)
@@ -86,7 +83,7 @@ public class ProductControllerTest {
 
     @Test
     public void getProduct() throws Exception {
-        when(productRepository.findById(1)).thenReturn(Optional.of(this.product));
+        when(productService.findById(1)).thenReturn(this.product);
 
         mvc.perform(get("/products/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -110,8 +107,8 @@ public class ProductControllerTest {
 
     @Test
     public void deleteProduct() throws Exception {
-        when(productRepository.findById(1)).thenReturn(Optional.of(this.product));
-        doNothing().when(productRepository).deleteById(this.product.getId());
+        when(productService.findById(1)).thenReturn(this.product);
+        doNothing().when(productService).delete(this.product.getId());
 
         mvc.perform(
                 delete("/products/{id}", this.product.getId())

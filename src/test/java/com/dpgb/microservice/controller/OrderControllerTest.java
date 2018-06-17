@@ -2,9 +2,8 @@ package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.Order;
 import com.dpgb.microservice.entity.Product;
-import com.dpgb.microservice.repository.AuditRepository;
-import com.dpgb.microservice.repository.OrderRepository;
 import com.dpgb.microservice.repository.ProductRepository;
+import com.dpgb.microservice.service.OrderService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,11 +35,7 @@ public class OrderControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    OrderRepository orderRepository;
-
-    @MockBean
-    AuditRepository auditRepository;
-
+    OrderService orderService;
 
     @MockBean
     ProductRepository productRepository;
@@ -75,7 +70,7 @@ public class OrderControllerTest {
     }
     @Test
     public void createOrderWithSuccess() throws Exception {
-        when(orderRepository.save(this.order)).thenReturn(this.order);
+        when(orderService.save(this.order)).thenReturn(this.order);
         mvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializeOrder(this.order)))
@@ -96,7 +91,7 @@ public class OrderControllerTest {
     @Test
     public void updateOrder() throws Exception {
 
-        when(orderRepository.findById(1)).thenReturn(Optional.of(this.order));
+        when(orderService.findById(1)).thenReturn(this.order);
 
         mvc.perform(
                 put("/order/{id}", 1)
@@ -107,7 +102,7 @@ public class OrderControllerTest {
 
     @Test
     public void getOrder() throws Exception {
-        when(orderRepository.findById(1)).thenReturn(Optional.of(this.order));
+        when(orderService.findById(1)).thenReturn(this.order);
 
         mvc.perform(get("/order/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -125,8 +120,8 @@ public class OrderControllerTest {
 
     @Test
     public void deleteOrder() throws Exception {
-        when(orderRepository.findById(1)).thenReturn(Optional.of(this.order));
-        doNothing().when(orderRepository).deleteById(this.order.getId());
+        when(orderService.findById(1)).thenReturn(this.order);
+        doNothing().when(orderService).delete(this.order.getId());
 
         mvc.perform(
                 delete("/order/{id}", this.order.getId())

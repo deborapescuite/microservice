@@ -2,7 +2,7 @@ package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.User;
 import com.dpgb.microservice.repository.AuditRepository;
-import com.dpgb.microservice.repository.UserRepository;
+import com.dpgb.microservice.service.UserService;
 import com.dpgb.microservice.utils.UserType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,8 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -36,10 +34,7 @@ public class UserControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    UserRepository userRepository;
-
-    @MockBean
-    AuditRepository auditRepository;
+    UserService userService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -61,7 +56,7 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        when(userRepository.save(this.user)).thenReturn(this.user);
+        when(userService.save(this.user)).thenReturn(this.user);
         mvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializeUser(this.user)))
@@ -81,7 +76,7 @@ public class UserControllerTest {
     @Test
     public void updateUser() throws Exception {
 
-        when(userRepository.findById(1)).thenReturn(Optional.of(this.user));
+        when(userService.findById(1)).thenReturn(this.user);
 
         mvc.perform(
                 put("/user/{id}", 1)
@@ -92,7 +87,7 @@ public class UserControllerTest {
 
     @Test
     public void getUser() throws Exception {
-        when(userRepository.findById(1)).thenReturn(Optional.of(this.user));
+        when(userService.findById(1)).thenReturn(this.user);
 
         mvc.perform(get("/user/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -112,8 +107,8 @@ public class UserControllerTest {
 
     @Test
     public void deleteUser() throws Exception {
-        when(userRepository.findById(1)).thenReturn(Optional.of(this.user));
-        doNothing().when(userRepository).deleteById(this.user.getId());
+        when(userService.findById(1)).thenReturn(this.user);
+        doNothing().when(userService).delete(this.user.getId());
 
         mvc.perform(
                 delete("/user/{id}", this.user.getId())
