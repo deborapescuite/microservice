@@ -1,8 +1,6 @@
 package com.dpgb.microservice.controller;
 
-import com.dpgb.microservice.entity.Audit;
 import com.dpgb.microservice.entity.User;
-import com.dpgb.microservice.exception.UserNotFoundException;
 import com.dpgb.microservice.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalTime;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;

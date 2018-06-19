@@ -31,14 +31,14 @@ public class UserService {
     public void delete(Integer id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
-            //TO DO : Audit
+            //TO DO : BaseAudit
         } else
             throw new UserNotFoundException("User id: " + id + " not found.Could not be deleted.");
     }
 
     public User update(Integer id, User updatedUser) {
         if (userRepository.findById(id).isPresent()) {
-            //TO DO : Audit
+            //TO DO : BaseAudit
             return userRepository.save(updatedUser);
         } else
             throw new UserNotFoundException("User id: " + id + " not found.Could not be updated.");

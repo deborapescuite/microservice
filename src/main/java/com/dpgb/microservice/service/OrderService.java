@@ -31,13 +31,12 @@ public class OrderService {
     public void delete(Integer id) {
         if (orderRepository.findById(id).isPresent()) {
             orderRepository.deleteById(id);
-            //TO DO : Audit
         } else
             throw new OrderNotFoundException("Order id: " + id + " not found.Could not be deleted.");
     }
 
     public Order update(Integer id, Order updateOrder) {
-        if (orderRepository.findById(id).isPresent()) {//TO DO : Audit
+        if (orderRepository.findById(id).isPresent()) {
             return orderRepository.save(updateOrder);
         } else
             throw new OrderNotFoundException("Order id: " + id + " not found.Could not be updated.");
@@ -49,7 +48,7 @@ public class OrderService {
         if (productList != null) {
             for (Product product : productList) {
                 if (product != null) {
-                    total += product.getUnitValue() * product.getQuantity();
+                    total = (product.getUnitValue() * product.getQuantity())+ total;
                 }
             }
         }

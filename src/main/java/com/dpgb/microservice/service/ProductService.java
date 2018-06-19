@@ -30,14 +30,12 @@ public class ProductService {
     public void delete(Integer id) {
         if (productRepository.findById(id).isPresent()) {
             productRepository.deleteById(id);
-            //TO DO : AUDIT
         } else
             throw new ProductNotFoundException("Product id: " + id + " not found.Could not be deleted.");
     }
 
     public Product update(Integer id, Product updateProduct) {
         if (productRepository.findById(id).isPresent()) {
-            //TO DO : AUDIT
             return productRepository.save(updateProduct);
 
         } else

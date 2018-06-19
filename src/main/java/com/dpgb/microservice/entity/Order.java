@@ -1,13 +1,17 @@
 package com.dpgb.microservice.entity;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "tbl_order")
-public class Order {
+@EnableJpaAuditing
+@EntityListeners(AuditingEntityListener.class)
+public class Order extends BaseAudit{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -16,8 +20,7 @@ public class Order {
     @OneToMany
     private List<Product> productList;
     private Double totalPrice;
-    @NotNull
-    private Date creationDate;
+
 
     public Integer getId() {
         return id;
@@ -51,13 +54,6 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
 
     @Override
     public boolean equals(Object o) {

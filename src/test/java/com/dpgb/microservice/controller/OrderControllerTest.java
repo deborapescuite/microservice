@@ -59,7 +59,6 @@ public class OrderControllerTest {
         order = new Order();
         order.setId(1);
         order.setUserID(1);
-        order.setCreationDate(new Date());
         order.setProductList(productList);
     }
 

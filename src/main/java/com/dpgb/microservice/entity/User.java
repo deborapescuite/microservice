@@ -2,20 +2,28 @@ package com.dpgb.microservice.entity;
 
 import com.dpgb.microservice.utils.UserType;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+
 
 @Entity
 @Table(name = "tbl_user")
-public class User {
+@EnableJpaAuditing
+@EntityListeners(AuditingEntityListener.class)
+public class User extends BaseAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull(message = "Name can't be empty")
+
+    @NotBlank(message = "Name is required")
     private String name;
-    private Date createDate;
+
     @NotNull(message = "User type can't be empty")
     private UserType userType;
 
@@ -43,14 +51,6 @@ public class User {
         this.userType = role;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,4 +65,5 @@ public class User {
     public int hashCode() {
         return id.hashCode();
     }
+
 }

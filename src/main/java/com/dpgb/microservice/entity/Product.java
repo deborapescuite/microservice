@@ -1,7 +1,10 @@
 package com.dpgb.microservice.entity;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
@@ -9,13 +12,14 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tbl_product")
-public class Product {
+@EnableJpaAuditing
+@EntityListeners(AuditingEntityListener.class)
+public class Product extends BaseAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull(message = "Name can't be null")
-    @NotEmpty(message = "Name can't be empty")
+    @NotBlank(message = "Name is required")
     private String name;
     private String description;
     @NotNull

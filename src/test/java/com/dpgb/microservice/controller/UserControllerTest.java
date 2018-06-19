@@ -1,7 +1,6 @@
 package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.User;
-import com.dpgb.microservice.repository.AuditRepository;
 import com.dpgb.microservice.service.UserService;
 import com.dpgb.microservice.utils.UserType;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
-import java.util.Optional;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -45,7 +43,6 @@ public class UserControllerTest {
         user = new User();
         user.setId(1);
         user.setName("User1");
-        user.setCreateDate(new Date());
         user.setUserType(UserType.ADMIN);
     }
 
