@@ -19,6 +19,9 @@ public class OrderService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ProductService productService;
+
 
     public Order findById(Integer id) {
         Optional<Order> optional = orderRepository.findById(id);
@@ -49,6 +52,7 @@ public class OrderService {
     public Order save(Order createOrder) {
         userService.findById(createOrder.getUserId());
         createOrder.setTotalPrice(generateTotalPrice(createOrder.getOrderItems()));
+        verifyProduct(createOrder.getOrderItems());
         return orderRepository.save(createOrder);
     }
 
@@ -60,5 +64,11 @@ public class OrderService {
              }
          }
         return total;
+    }
+
+    public void verifyProduct(List<OrderItem> orderItems){
+        for (OrderItem orderItem : orderItems) {
+            productService.findById(orderItem.getProduct().getId());
+        }
     }
 }

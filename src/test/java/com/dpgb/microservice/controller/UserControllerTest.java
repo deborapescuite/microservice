@@ -1,6 +1,7 @@
 package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.User;
+import com.dpgb.microservice.exception.UserNotFoundException;
 import com.dpgb.microservice.service.UserService;
 import com.dpgb.microservice.utils.UserType;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -91,9 +92,16 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(this.user.getId()))
                 .andExpect(jsonPath("$.name").value("User1"))
-                .andExpect(jsonPath("$.userType").value(UserType.ADMIN.toJson()));
+                .andExpect(jsonPath("$.userType").value(UserType.ADMIN.toString()));
     }
 
+    @Test
+    public void getNotFoundUser() throws Exception {
+        when(userService.findById(999)).thenThrow(UserNotFoundException.class);
+        mvc.perform(get("/user/{id}", 999)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+    }
 
     @Test
     public void getAllUsers() throws Exception {

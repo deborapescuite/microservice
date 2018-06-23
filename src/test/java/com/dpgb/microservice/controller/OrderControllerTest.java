@@ -4,6 +4,8 @@ import com.dpgb.microservice.entity.Order;
 import com.dpgb.microservice.entity.OrderItem;
 import com.dpgb.microservice.entity.Product;
 import com.dpgb.microservice.entity.User;
+import com.dpgb.microservice.exception.OrderNotFoundException;
+import com.dpgb.microservice.exception.ProductNotFoundException;
 import com.dpgb.microservice.repository.ProductRepository;
 import com.dpgb.microservice.service.OrderService;
 import com.dpgb.microservice.utils.UserType;
@@ -146,5 +148,28 @@ public class OrderControllerTest {
                 delete("/order/{id}", this.order.getId())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void createOrderWithUserNotFound() throws Exception {
+        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+        orderItemList.add(orderItem);
+        Order newOrder = new Order();
+        newOrder.setId(1);
+        newOrder.setUserId(99999999);
+        newOrder.setOrderItems(orderItemList);
+
+        mvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializeOrder(newOrder)))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    public void getNotFoundOrder() throws Exception {
+        when(orderService.findById(999)).thenThrow(OrderNotFoundException.class);
+        mvc.perform(get("/order/{id}", 999)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
     }
 }

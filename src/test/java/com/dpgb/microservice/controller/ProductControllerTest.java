@@ -1,6 +1,8 @@
 package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.Product;
+import com.dpgb.microservice.exception.ProductNotFoundException;
+import com.dpgb.microservice.exception.UserNotFoundException;
 import com.dpgb.microservice.service.ProductService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -86,6 +88,14 @@ public class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(this.product.getId()))
                 .andExpect(jsonPath("$.name").value("Paper"));
+    }
+
+    @Test
+    public void getNotFoundProduct() throws Exception {
+        when(productService.findById(999)).thenThrow(ProductNotFoundException.class);
+        mvc.perform(get("/products/{id}", 999)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
     }
 
     public byte[] serializeProducts(Product product) throws JsonProcessingException {
