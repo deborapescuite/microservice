@@ -4,26 +4,23 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import java.util.Objects;
-
 
 @Entity
-@Table(name = "tbl_product")
+@Table(name = "tbl_order_item")
 @EnableJpaAuditing
 @EntityListeners(AuditingEntityListener.class)
-public class Product extends BaseAudit {
+public class OrderItem extends BaseAudit{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotBlank(message = "Name is required")
-    private String name;
-    @NotNull
-    @Positive(message = "UnitValue should be a positive number")
+    //@OneToOne(cascade=CascadeType.ALL)
+    @OneToOne
+    private Product product;
+
     private Double unitValue;
+
+    private Integer quantity;
 
     public Integer getId() {
         return id;
@@ -33,12 +30,12 @@ public class Product extends BaseAudit {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Double getUnitValue() {
@@ -49,17 +46,26 @@ public class Product extends BaseAudit {
         this.unitValue = unitValue;
     }
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return Objects.equals(id, product.id);
+        if (!(o instanceof OrderItem)) return false;
+
+        OrderItem orderItem = (OrderItem) o;
+
+        return id != null ? id.equals(orderItem.id) : orderItem.id == null;
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id);
+        return id.hashCode();
     }
 }

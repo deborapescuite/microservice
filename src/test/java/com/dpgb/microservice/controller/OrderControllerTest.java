@@ -1,9 +1,12 @@
 package com.dpgb.microservice.controller;
 
 import com.dpgb.microservice.entity.Order;
+import com.dpgb.microservice.entity.OrderItem;
 import com.dpgb.microservice.entity.Product;
+import com.dpgb.microservice.entity.User;
 import com.dpgb.microservice.repository.ProductRepository;
 import com.dpgb.microservice.service.OrderService;
+import com.dpgb.microservice.utils.UserType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,27 +47,42 @@ public class OrderControllerTest {
 
     private Order order;
 
+    private User user;
+
+    private OrderItem orderItem;
+
     @Before
     public void setUp() {
 
         Product product = new Product();
         product.setName("Plastic folder");
-        product.setDescription("Red plastic folder");
         product.setUnitValue(10.50d);
-        product.setQuantity(1);
 
         List<Product> productList = new ArrayList<Product>();
         productList.add(product);
 
+        user = new User();
+        user.setId(5);
+        user.setName("TestUser");
+        user.setUserType(UserType.ADMIN);
+
+        orderItem = new OrderItem();
+        orderItem.setProduct(product);
+        orderItem.setQuantity(1);
+        orderItem.setUnitValue(5.50);
+        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+        orderItemList.add(orderItem);
+
         order = new Order();
         order.setId(1);
-        order.setUserID(1);
-        order.setProductList(productList);
+        order.setUserId(user.getId());
+        order.setOrderItems(orderItemList);
+
     }
 
     public byte[] serializeOrder(Order order) throws JsonProcessingException {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        byte[] test = mapper.writeValueAsBytes(order);
+        System.out.println(mapper.writeValueAsString(order));
         return mapper.writeValueAsBytes(order);
     }
     @Test
@@ -80,6 +98,8 @@ public class OrderControllerTest {
     @Test
     public void createOrderWithError() throws Exception {
         Order emptyOrder = new Order();
+        emptyOrder.setId(2);
+
 
         mvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +127,7 @@ public class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(this.order.getId()))
-                .andExpect(jsonPath("$.userID").value(1));
+                .andExpect(jsonPath("$.userId").value(user.getId()));
     }
 
     @Test

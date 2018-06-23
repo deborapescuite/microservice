@@ -14,12 +14,17 @@ import java.time.LocalDateTime;
 @RestController
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<Object> handleAllExceptions(Exception ex) {
+        ErrorDetail exceptionResponse = new ErrorDetail(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler({NotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFound(Exception ex) {
         ErrorDetail errorDetail = new ErrorDetail(ex.getMessage(), HttpStatus.NOT_FOUND.toString());
         return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
     }
-
 
     class ErrorDetail {
         private LocalDateTime timestamp;

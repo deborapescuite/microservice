@@ -1,7 +1,7 @@
 package com.dpgb.microservice.service;
 
 import com.dpgb.microservice.entity.Order;
-import com.dpgb.microservice.entity.Product;
+import com.dpgb.microservice.entity.OrderItem;
 import com.dpgb.microservice.exception.OrderNotFoundException;
 import com.dpgb.microservice.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,10 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    UserService userService;
+
 
     public Order findById(Integer id) {
         Optional<Order> optional = orderRepository.findById(id);
@@ -43,17 +47,18 @@ public class OrderService {
     }
 
     public Order save(Order createOrder) {
-        List<Product> productList = createOrder.getProductList();
-        Double total = 0.0;
-        if (productList != null) {
-            for (Product product : productList) {
-                if (product != null) {
-                    total = (product.getUnitValue() * product.getQuantity())+ total;
-                }
-            }
-        }
-        createOrder.setTotalPrice(total);
+        userService.findById(createOrder.getUserId());
+        createOrder.setTotalPrice(generateTotalPrice(createOrder.getOrderItems()));
         return orderRepository.save(createOrder);
+    }
 
+    private Double generateTotalPrice( List<OrderItem> orderItems) {
+        Double total = 0.0;
+        for (OrderItem orderItem : orderItems) {
+             if (orderItem != null) {
+                 total = (orderItem.getUnitValue() * orderItem.getQuantity())+ total;
+             }
+         }
+        return total;
     }
 }

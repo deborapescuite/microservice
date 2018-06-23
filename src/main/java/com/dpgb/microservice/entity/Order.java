@@ -15,12 +15,14 @@ public class Order extends BaseAudit{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull
-    private Integer userID;
-    @OneToMany
-    private List<Product> productList;
-    private Double totalPrice;
 
+    @NotNull
+    private Integer userId;
+
+    @OneToMany(cascade=CascadeType.ALL)
+    private List<OrderItem> orderItems;
+
+    private Double totalPrice;
 
     public Integer getId() {
         return id;
@@ -30,28 +32,28 @@ public class Order extends BaseAudit{
         this.id = id;
     }
 
-    public Integer getUserID() {
-        return userID;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUserID(Integer userID) {
-        this.userID = userID;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public List<Product> getProductList() {
-        return productList;
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setTotalPrice(Double total) {
+        this.totalPrice = total;
     }
 
 
