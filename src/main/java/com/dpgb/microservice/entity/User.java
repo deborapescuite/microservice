@@ -24,7 +24,7 @@ public class User extends BaseAudit {
     @NotBlank(message = "Name is required")
     private String name;
 
-    //@NotNull(message = "User type can't be empty")
+    @NotNull(message = "User type can't be empty")
     @Enumerated(EnumType.ORDINAL)
     private UserType userType;
 

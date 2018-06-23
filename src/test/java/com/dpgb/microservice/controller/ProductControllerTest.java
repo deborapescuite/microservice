@@ -50,21 +50,11 @@ public class ProductControllerTest {
     @Test
     public void createProductWithSuccess() throws Exception {
         when(productService.save(this.product)).thenReturn(this.product);
-         mvc.perform(post("/products")
+        mvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializeProducts(this.product)))
                 .andExpect(status().isCreated());
 
-    }
-
-    @Test
-    public void createProductWithError() throws Exception {
-        Product emptyProduct = new Product();
-
-        mvc.perform(post("/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeProducts(emptyProduct)))
-                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -90,13 +80,6 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.name").value("Paper"));
     }
 
-    @Test
-    public void getNotFoundProduct() throws Exception {
-        when(productService.findById(999)).thenThrow(ProductNotFoundException.class);
-        mvc.perform(get("/products/{id}", 999)
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().is4xxClientError());
-    }
 
     public byte[] serializeProducts(Product product) throws JsonProcessingException {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -119,5 +102,23 @@ public class ProductControllerTest {
                 delete("/products/{id}", this.product.getId())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void getNotFoundProduct() throws Exception {
+        when(productService.findById(999)).thenThrow(ProductNotFoundException.class);
+        mvc.perform(get("/products/{id}", 999)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void createProductWithError() throws Exception {
+        Product emptyProduct = new Product();
+
+        mvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializeProducts(emptyProduct)))
+                .andExpect(status().is4xxClientError());
     }
 }

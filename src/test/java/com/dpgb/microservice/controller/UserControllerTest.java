@@ -17,8 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Date;
-
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -62,16 +60,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createProductWithError() throws Exception {
-        User emptyUser = new User();
-
-        mvc.perform(post("/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeUser(emptyUser)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
     public void updateUser() throws Exception {
 
         when(userService.findById(1)).thenReturn(this.user);
@@ -96,14 +84,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getNotFoundUser() throws Exception {
-        when(userService.findById(999)).thenThrow(UserNotFoundException.class);
-        mvc.perform(get("/user/{id}", 999)
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
     public void getAllUsers() throws Exception {
         mvc.perform(get("/user")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -120,4 +100,23 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    public void getNotFoundUser() throws Exception {
+        when(userService.findById(999)).thenThrow(UserNotFoundException.class);
+        mvc.perform(get("/user/{id}", 999)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void createUserWithError() throws Exception {
+        User emptyUser = new User();
+
+        mvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializeUser(emptyUser)))
+                .andExpect(status().is4xxClientError());
+    }
+
 }

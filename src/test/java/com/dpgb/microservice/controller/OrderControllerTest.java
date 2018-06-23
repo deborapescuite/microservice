@@ -97,17 +97,6 @@ public class OrderControllerTest {
 
     }
 
-    @Test
-    public void createOrderWithError() throws Exception {
-        Order emptyOrder = new Order();
-        emptyOrder.setId(2);
-
-
-        mvc.perform(post("/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeOrder(emptyOrder)))
-                .andExpect(status().is4xxClientError());
-    }
 
     @Test
     public void updateOrder() throws Exception {
@@ -172,4 +161,17 @@ public class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void createOrderWithError() throws Exception {
+        Order emptyOrder = new Order();
+        emptyOrder.setId(2);
+
+
+        mvc.perform(post("/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializeOrder(emptyOrder)))
+                .andExpect(status().is4xxClientError());
+    }
+
 }
