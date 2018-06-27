@@ -2,6 +2,10 @@ package com.dpgb.microservice.utils;
 
 public enum UserType {
 
-    ADMIN, CUSTOMER
+    ADMIN, CUSTOMER;
+
+    public String getUserType() {
+        return name();
+    }
 
 }

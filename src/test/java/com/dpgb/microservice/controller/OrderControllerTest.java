@@ -5,7 +5,6 @@ import com.dpgb.microservice.entity.OrderItem;
 import com.dpgb.microservice.entity.Product;
 import com.dpgb.microservice.entity.User;
 import com.dpgb.microservice.exception.OrderNotFoundException;
-import com.dpgb.microservice.exception.ProductNotFoundException;
 import com.dpgb.microservice.repository.ProductRepository;
 import com.dpgb.microservice.service.OrderService;
 import com.dpgb.microservice.utils.UserType;
@@ -19,25 +18,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import javax.servlet.Filter;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(OrderController.class)
 public class OrderControllerTest {
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
+    private Filter springSecurityFilterChain;
 
     @MockBean
     OrderService orderService;
@@ -80,6 +89,12 @@ public class OrderControllerTest {
         order.setUserId(user.getId());
         order.setOrderItems(orderItemList);
 
+        mvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .addFilters(springSecurityFilterChain)
+                .build();
+
+
     }
 
     public byte[] serializeOrder(Order order) throws JsonProcessingException {
@@ -88,6 +103,7 @@ public class OrderControllerTest {
         return mapper.writeValueAsBytes(order);
     }
     @Test
+    @WithAnonymousUser
     public void createOrderWithSuccess() throws Exception {
         when(orderService.save(this.order)).thenReturn(this.order);
         mvc.perform(post("/order")
@@ -99,6 +115,7 @@ public class OrderControllerTest {
 
 
     @Test
+    @WithMockUser
     public void updateOrder() throws Exception {
 
         when(orderService.findById(1)).thenReturn(this.order);

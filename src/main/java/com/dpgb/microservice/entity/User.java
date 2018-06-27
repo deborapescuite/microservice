@@ -1,10 +1,8 @@
 package com.dpgb.microservice.entity;
 
 import com.dpgb.microservice.utils.UserType;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -23,6 +21,9 @@ public class User extends BaseAudit {
 
     @NotBlank(message = "Name is required")
     private String name;
+
+    @NotBlank(message = "Password is required")
+    private String password;
 
     @NotNull(message = "User type can't be empty")
     @Enumerated(EnumType.ORDINAL)
@@ -50,6 +51,14 @@ public class User extends BaseAudit {
 
     public void setUserType(UserType role) {
         this.userType = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

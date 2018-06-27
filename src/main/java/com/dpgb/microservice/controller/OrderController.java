@@ -46,14 +46,14 @@ public class OrderController {
         orderService.delete(id);
     }
 
-    @RequestMapping(method = PUT, value = "/order/{id}",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = PUT, value = "/order/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Order updateOrder(@PathVariable Integer id, @Valid @RequestBody Order updateOrder) {
         logger.info("UPDATE/PUT  a order with id: " + id);
         return orderService.update(id, updateOrder);
     }
 
-    @RequestMapping(method = POST, value = "/order",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = POST, value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Order> createOrder(@Valid @RequestBody Order createOrder, UriComponentsBuilder ucb) {
         logger.info("CREATE/POST  a new order.");
 

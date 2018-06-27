@@ -5,15 +5,11 @@ import com.dpgb.microservice.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -54,21 +50,13 @@ public class UserController {
         return userService.update(id, updatedUser);
     }
 
-    @RequestMapping(method = POST, value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@Valid @RequestBody User createUser, UriComponentsBuilder ucb) {
-        logger.info("CREATE/POST  a new user.");
-        User newUser = userService.save(createUser);
+    @RequestMapping(method = POST, value = "/user/signin")
+    public String login(@RequestBody User createUser) {
+        return userService.signin(createUser.getName(), createUser.getPassword());
+    }
 
-        HttpHeaders headers = new HttpHeaders();
-        URI locationUri =
-                ucb.path("/user/")
-                        .path(String.valueOf(newUser.getId()))
-                        .build()
-                        .toUri();
-        headers.setLocation(locationUri);
-        ResponseEntity<User> responseEntity =
-                new ResponseEntity<User>(
-                        newUser, headers, HttpStatus.CREATED);
-        return responseEntity;
+    @PostMapping("/user/signup")
+    public String signup(@RequestBody User createUser) {
+        return userService.signup(createUser);
     }
 }

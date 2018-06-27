@@ -50,14 +50,14 @@ public class UserControllerTest {
         return mapper.writeValueAsBytes(user);
     }
 
-    @Test
-    public void createUser() throws Exception {
-        when(userService.save(this.user)).thenReturn(this.user);
-        mvc.perform(post("/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeUser(this.user)))
-                .andExpect(status().isCreated());
-    }
+//   @Test
+//    public void createUser() throws Exception {
+//        when(userService.save(this.user)).thenReturn(this.user);
+//       mvc.perform(post("/user")
+//                .contentType(MediaType.APPLICATION_JSON)
+//               .content(serializeUser(this.user)))
+//                .andExpect(status().isCreated());
+//    }
 
     @Test
     public void updateUser() throws Exception {

@@ -1,6 +1,5 @@
 package com.dpgb.microservice.entity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -35,12 +34,12 @@ public class BaseAudit {
     }
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         setCreatedDate(new Date());
     }
 
     @PreUpdate
-    public void preUpdate(){
+    public void preUpdate() {
         setModifiedDate(new Date());
     }
 }

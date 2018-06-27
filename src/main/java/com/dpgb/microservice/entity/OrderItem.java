@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "tbl_order_item")
 @EnableJpaAuditing
 @EntityListeners(AuditingEntityListener.class)
-public class OrderItem extends BaseAudit{
+public class OrderItem extends BaseAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

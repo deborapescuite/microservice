@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "tbl_order")
 @EnableJpaAuditing
 @EntityListeners(AuditingEntityListener.class)
-public class Order extends BaseAudit{
+public class Order extends BaseAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,7 +19,7 @@ public class Order extends BaseAudit{
     @NotNull
     private Integer userId;
 
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
     private Double totalPrice;

@@ -1,4 +1,11 @@
 package com.dpgb.microservice.exception;
 
-public class ExpiredTokenException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+public class ExpiredTokenException extends RuntimeException {
+    public ExpiredTokenException(String message) {
+        super(message);
+    }
 }

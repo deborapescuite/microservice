@@ -1,9 +1,13 @@
 package com.dpgb.microservice.controller;
 
+import com.dpgb.microservice.exception.ExpiredTokenException;
+import com.dpgb.microservice.exception.InvalidUsePasswordException;
 import com.dpgb.microservice.exception.NotFoundException;
+import com.dpgb.microservice.exception.UserAlreadyExistsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,13 +25,13 @@ import java.util.List;
 @RestController
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class, ExpiredTokenException.class})
     public final ResponseEntity<Object> handleAllExceptions(Exception ex) {
         ErrorDetail exceptionResponse = new ErrorDetail(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.toString());
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({NotFoundException.class})
+    @ExceptionHandler({NotFoundException.class, UsernameNotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFound(Exception ex) {
         ErrorDetail errorDetail = new ErrorDetail(ex.getMessage(), HttpStatus.NOT_FOUND.toString());
         return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
@@ -41,6 +45,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.add(new ErrorDetail(error.getField() + ": " + error.getDefaultMessage(), HttpStatus.BAD_REQUEST.toString()));
         }
         return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidUsePasswordException.class, UserAlreadyExistsException.class})
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    protected ResponseEntity<Object> handleInvalidUserPassword(Exception ex) {
+        ErrorDetail errorDetail = new ErrorDetail(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.toString());
+        return new ResponseEntity<>(errorDetail, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     class ErrorDetail {
