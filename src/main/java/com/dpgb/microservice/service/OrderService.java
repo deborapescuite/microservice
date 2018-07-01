@@ -2,11 +2,16 @@ package com.dpgb.microservice.service;
 
 import com.dpgb.microservice.entity.Order;
 import com.dpgb.microservice.entity.OrderItem;
+
 import com.dpgb.microservice.exception.OrderNotFoundException;
+import com.dpgb.microservice.exception.OrderOfOtherUserException;
 import com.dpgb.microservice.repository.OrderRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,16 +33,36 @@ public class OrderService {
 
     public Order findById(Integer id) {
         logger.info("Find order by id: " + id);
+
         Optional<Order> optional = orderRepository.findById(id);
-        if (optional.isPresent())
-            return optional.get();
-        else
+        if (optional.isPresent()) {
+            com.dpgb.microservice.entity.User user = getAuthUser();
+            if ((optional.get().getUserId() == user.getId()) || user.getUserType().name() == com.dpgb.microservice.utils.UserType.ADMIN.name())
+                return optional.get();
+            else
+                throw new OrderOfOtherUserException("This order " + id + "belongs to user" + optional.get().getUserId() + "You are not allowed to see it.");
+        } else
             throw new OrderNotFoundException("Order id: " + id + " not found.");
     }
 
+    private com.dpgb.microservice.entity.User getAuthUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedUser = (User) authentication.getPrincipal();
+        com.dpgb.microservice.entity.User customUser = userService.findByName(loggedUser.getUsername());
+        return customUser;
+    }
+
     public List<Order> findAll() {
-        logger.info("Find all orders.");
-        return orderRepository.findAll();
+        com.dpgb.microservice.entity.User user = getAuthUser();
+
+        if (user.getUserType().name() == com.dpgb.microservice.utils.UserType.ADMIN.name()) {
+            logger.info("Find all orders.");
+            return orderRepository.findAll();
+        } else {
+
+            logger.info("Find all orders by user id: " + user.getId());
+            return orderRepository.findByUserId(user.getId());
+        }
     }
 
     public void delete(Integer id) {

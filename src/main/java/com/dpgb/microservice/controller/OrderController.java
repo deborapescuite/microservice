@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +26,8 @@ public class OrderController {
     @Autowired
     OrderService orderService;
 
+
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER') ")
     @RequestMapping(method = GET, value = "/order/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Order getOrder(@PathVariable Integer id) {
@@ -32,6 +35,7 @@ public class OrderController {
         return orderService.findById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER') ")
     @RequestMapping(method = GET, value = "/order", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<Order> getAllOrders() {
@@ -39,6 +43,7 @@ public class OrderController {
         return orderService.findAll();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = DELETE, value = "/order/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder(@PathVariable Integer id) {
@@ -46,6 +51,7 @@ public class OrderController {
         orderService.delete(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = PUT, value = "/order/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Order updateOrder(@PathVariable Integer id, @Valid @RequestBody Order updateOrder) {
@@ -53,6 +59,7 @@ public class OrderController {
         return orderService.update(id, updateOrder);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER') ")
     @RequestMapping(method = POST, value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Order> createOrder(@Valid @RequestBody Order createOrder, UriComponentsBuilder ucb) {
         logger.info("CREATE/POST  a new order.");

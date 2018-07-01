@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +26,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER') ")
     @RequestMapping(method = GET, value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Product getProduct(@PathVariable Integer id) {
@@ -32,6 +34,7 @@ public class ProductController {
         return productService.findById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('CUSTOMER') ")
     @RequestMapping(method = GET, value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getAllProducts() {
@@ -39,6 +42,7 @@ public class ProductController {
         return productService.findAll();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = DELETE, value = "/products/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Integer id) {
@@ -46,6 +50,7 @@ public class ProductController {
         productService.delete(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = PUT, value = "/products/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Product updateProduct(@PathVariable Integer id, @Valid @RequestBody Product updateProduct) {
@@ -53,6 +58,7 @@ public class ProductController {
         return productService.update(id, updateProduct);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = POST, value = "/products", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product createProduct, UriComponentsBuilder ucb) {
         logger.info("CREATE/POST  a new product.");

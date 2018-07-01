@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,7 +22,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = GET, value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@PathVariable Integer id) {
@@ -29,6 +30,7 @@ public class UserController {
         return userService.findById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = GET, value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
@@ -36,6 +38,7 @@ public class UserController {
         return userService.findAll();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = DELETE, value = "/user/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer id) {
@@ -43,6 +46,7 @@ public class UserController {
         userService.delete(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = PUT, value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public User updateUser(@PathVariable Integer id, @Valid @RequestBody User updatedUser) {
@@ -55,6 +59,7 @@ public class UserController {
         return userService.signin(createUser.getName(), createUser.getPassword());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/user/signup")
     public String signup(@RequestBody User createUser) {
         return userService.signup(createUser);
