@@ -40,7 +40,7 @@ public class OrderService {
             if ((optional.get().getUserId() == user.getId()) || user.getUserType().name() == com.dpgb.microservice.utils.UserType.ADMIN.name())
                 return optional.get();
             else
-                throw new OrderOfOtherUserException("This order " + id + "belongs to user" + optional.get().getUserId() + "You are not allowed to see it.");
+                throw new OrderOfOtherUserException("This order: " + id + " belongs to user: " + optional.get().getUserId() + ".You are not allowed to see it.");
         } else
             throw new OrderNotFoundException("Order id: " + id + " not found.");
     }
