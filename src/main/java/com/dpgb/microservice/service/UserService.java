@@ -6,6 +6,8 @@ import com.dpgb.microservice.exception.UserAlreadyExistsException;
 import com.dpgb.microservice.exception.UserNotFoundException;
 import com.dpgb.microservice.repository.UserRepository;
 import com.dpgb.microservice.security.JwtTokenProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +31,10 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private static final Logger logger = LogManager.getLogger(UserService.class);
+
     public User findById(Integer id) {
+        logger.info("Find user by id: " + id);
         Optional<User> optional = userRepository.findById(id);
         if (optional.isPresent())
             return optional.get();
@@ -38,10 +43,12 @@ public class UserService {
     }
 
     public List<User> findAll() {
+        logger.info("Find all users." );
         return userRepository.findAll();
     }
 
     public void delete(Integer id) {
+        logger.info("Delete user - id: " + id );
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
         } else
@@ -49,6 +56,7 @@ public class UserService {
     }
 
     public User update(Integer id, User updatedUser) {
+        logger.info("Update user - id: " + id );
         if (userRepository.findById(id).isPresent()) {
             return userRepository.save(updatedUser);
         } else
@@ -56,6 +64,7 @@ public class UserService {
     }
 
     public String signin(String username, String password) {
+        logger.info("Sign in user: " + username);
         //TO DO : authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         User user = userRepository.findByName(username);
         String token = "";
@@ -70,6 +79,7 @@ public class UserService {
     }
 
     public String signup(User user) {
+        logger.info("Sign up user: " + user.getName());
         if (!userRepository.existsByName(user.getName())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
