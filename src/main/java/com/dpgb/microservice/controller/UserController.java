@@ -64,4 +64,10 @@ public class UserController {
     public String signup(@RequestBody User createUser) {
         return userService.signup(createUser);
     }
+
+    @RequestMapping(method = POST, value = "/user/refreshToken")
+    @ResponseStatus(HttpStatus.OK)
+    public String refreshToken(@RequestBody String originalToken) {
+        return userService.refresh(originalToken);
+    }
 }

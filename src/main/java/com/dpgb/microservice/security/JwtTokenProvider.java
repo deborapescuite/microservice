@@ -21,7 +21,7 @@ public class JwtTokenProvider {
 
     static final String SECRET = "cGFzc3dvcmQxMjM0NTY3ODk=";
 
-    private long validityInMilliseconds = 3600000; // 1h
+    private long validityInMilliseconds = 1800000; // 30min
 
     private static final Logger logger = LogManager.getLogger(JwtTokenProvider.class);
 
@@ -29,7 +29,7 @@ public class JwtTokenProvider {
     private MyUserDetails myUserDetails;
 
     public String createToken(String username, String userType) {
-        logger.info("Creating token for user: "+username);
+        logger.info("Creating token for user: " + username);
 
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("auth", userType);
@@ -78,4 +78,5 @@ public class JwtTokenProvider {
 
         }
     }
+
 }

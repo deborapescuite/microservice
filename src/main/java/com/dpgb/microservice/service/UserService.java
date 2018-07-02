@@ -2,10 +2,13 @@ package com.dpgb.microservice.service;
 
 import com.dpgb.microservice.entity.User;
 import com.dpgb.microservice.exception.InvalidUsePasswordException;
+import com.dpgb.microservice.exception.NotFoundException;
 import com.dpgb.microservice.exception.UserAlreadyExistsException;
 import com.dpgb.microservice.exception.UserNotFoundException;
 import com.dpgb.microservice.repository.UserRepository;
 import com.dpgb.microservice.security.JwtTokenProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,6 +97,31 @@ public class UserService {
 
     public User findByName(String name){
         return userRepository.findByName(name);
+    }
+
+    public String refresh(String originalToken) {
+        String username = new String();
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        ObjectMapper mapper = new ObjectMapper();
+
+        if (originalToken == null)
+            throw new NotFoundException("Authorization Token not found.");
+        else {
+            String[] parts = originalToken.split("\\."); // Splitting header, payload and signature
+            String payload = new String(decoder.decode(parts[1])); // Payload
+            try {
+                JsonNode node = mapper.readTree(payload);
+                username = node.get("sub").asText();
+            } catch (IOException e) {
+                logger.error("Error while retrieve username.");
+                e.printStackTrace();
+            }
+            User user = userRepository.findByName(username);
+            if (user != null)
+                return jwtTokenProvider.createToken(user.getName(), user.getUserType().name());
+            else
+                throw new UserNotFoundException("User: " + "" + " not found.Could not refresh token.");
+        }
     }
 
 }
