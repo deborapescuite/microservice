@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,7 +43,7 @@ public class UserController {
     @RequestMapping(method = DELETE, value = "/user/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer id) {
-        logger.info("DELETE  a user with id: " + id);
+        logger.info("DELETE  a user with id: " + id + " by user: " + SecurityContextHolder.getContext().getAuthentication().getName());
         userService.delete(id);
     }
 

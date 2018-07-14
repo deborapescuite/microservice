@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ExpiredTokenException.class,Exception.class})
+    @ExceptionHandler({ExpiredTokenException.class})
     public final ResponseEntity<Object> handleAllExceptions(Exception ex) {
         ErrorDetail exceptionResponse = new ErrorDetail(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.toString());
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
