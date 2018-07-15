@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -85,7 +86,7 @@ public class UserService {
 
     public String signup(User user) {
         logger.info("Sign up user: " + user.getName());
-        if (!userRepository.existsByName(user.getName())) {
+        if (!Objects.nonNull(userRepository.findByName(user.getName()))) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return jwtTokenProvider.createToken(user.getName(), user.getUserType().name());
