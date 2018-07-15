@@ -1,7 +1,8 @@
 package com.dpgb.microservice.controller;
 
-import com.dpgb.microservice.exception.InvalidUsePasswordException;
+import com.dpgb.microservice.exception.InvalidUserPasswordException;
 import com.dpgb.microservice.exception.NotFoundException;
+import com.dpgb.microservice.exception.OrderOfOtherUserException;
 import com.dpgb.microservice.exception.UserAlreadyExistsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,11 +41,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({InvalidUsePasswordException.class, UserAlreadyExistsException.class})
+    @ExceptionHandler({InvalidUserPasswordException.class, UserAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Object> handleInvalidUserPassword(Exception ex) {
         ErrorDetail errorDetail = new ErrorDetail(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.toString());
         return new ResponseEntity<>(errorDetail, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler({OrderOfOtherUserException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    protected ResponseEntity<Object> handleOrderOfOtherUser(Exception ex) {
+        ErrorDetail errorDetail = new ErrorDetail(ex.getMessage(), HttpStatus.FORBIDDEN.toString());
+        return new ResponseEntity<>(errorDetail, HttpStatus.FORBIDDEN);
     }
 
     class ErrorDetail {

@@ -1,7 +1,7 @@
 package com.dpgb.microservice.service;
 
 import com.dpgb.microservice.entity.User;
-import com.dpgb.microservice.exception.InvalidUsePasswordException;
+import com.dpgb.microservice.exception.InvalidUserPasswordException;
 import com.dpgb.microservice.exception.NotFoundException;
 import com.dpgb.microservice.exception.UserAlreadyExistsException;
 import com.dpgb.microservice.exception.UserNotFoundException;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -78,9 +77,9 @@ public class UserService {
             if (user.getPassword().equals(password) && user.getName().equals(username))
                 token = jwtTokenProvider.createToken(user.getName(), user.getUserType().name());
             else
-                throw new InvalidUsePasswordException("Invalid username/password supplied");
+                throw new InvalidUserPasswordException("Invalid username/password supplied");
         } else
-            throw new InvalidUsePasswordException("Invalid username/password supplied");
+            throw new InvalidUserPasswordException("Invalid username/password supplied");
         return token;
     }
 
