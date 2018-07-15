@@ -1,6 +1,5 @@
 package com.dpgb.microservice.controller;
 
-import com.dpgb.microservice.exception.ExpiredTokenException;
 import com.dpgb.microservice.exception.InvalidUsePasswordException;
 import com.dpgb.microservice.exception.NotFoundException;
 import com.dpgb.microservice.exception.UserAlreadyExistsException;
@@ -24,12 +23,6 @@ import java.util.List;
 @ControllerAdvice
 @RestController
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    @ExceptionHandler({ExpiredTokenException.class})
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex) {
-        ErrorDetail exceptionResponse = new ErrorDetail(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.toString());
-        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @ExceptionHandler({NotFoundException.class, UsernameNotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFound(Exception ex) {
