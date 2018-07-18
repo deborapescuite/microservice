@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -75,7 +76,7 @@ public class UserService {
         User user = userRepository.findByName(username);
         String token = "";
         if (user != null) {
-            if (user.getPassword().equals(password) && user.getName().equals(username))
+            if (user.getPassword().equals(password))
                 token = jwtTokenProvider.createToken(user.getName(), user.getUserType().name());
             else
                 throw new InvalidUserPasswordException("Invalid username/password supplied");

@@ -76,6 +76,7 @@ public class OrderService {
     public Order update(Integer id, Order updateOrder) {
         if (orderRepository.findById(id).isPresent()) {
             logger.info("Update order - id: " + id);
+            updateOrder.setTotalPrice(generateTotalPrice(updateOrder.getOrderItems()));
             return orderRepository.save(updateOrder);
         } else
             throw new OrderNotFoundException("Order id: " + id + " not found.Could not be updated.");
