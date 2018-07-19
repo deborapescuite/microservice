@@ -84,7 +84,7 @@ public class OrderService {
 
     public Order save(Order createOrder) {
         logger.info("Save order.");
-        userService.findById(createOrder.getUserId());
+        createOrder.setUserId(userService.findByName(SecurityContextHolder.getContext().getAuthentication().getName()).getId());
         createOrder.setTotalPrice(generateTotalPrice(createOrder.getOrderItems()));
         verifyProduct(createOrder.getOrderItems());
         return orderRepository.save(createOrder);

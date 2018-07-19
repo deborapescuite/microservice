@@ -16,7 +16,6 @@ public class Order extends BaseAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
     private Integer userId;
 
     @OneToMany(cascade = CascadeType.ALL)

@@ -1,10 +1,7 @@
 package com.dpgb.microservice.service;
 
 import com.dpgb.microservice.entity.User;
-import com.dpgb.microservice.exception.InvalidUserPasswordException;
-import com.dpgb.microservice.exception.NotFoundException;
-import com.dpgb.microservice.exception.UserAlreadyExistsException;
-import com.dpgb.microservice.exception.UserNotFoundException;
+import com.dpgb.microservice.exception.*;
 import com.dpgb.microservice.repository.UserRepository;
 import com.dpgb.microservice.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +18,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService {
@@ -102,6 +100,7 @@ public class UserService {
 
     public String refresh(String originalToken) {
         String username = new String();
+        Long expirationInMiliseconds=0L;
         Base64.Decoder decoder = Base64.getUrlDecoder();
         ObjectMapper mapper = new ObjectMapper();
 
@@ -113,11 +112,18 @@ public class UserService {
             try {
                 JsonNode node = mapper.readTree(payload);
                 username = node.get("sub").asText();
+                expirationInMiliseconds=node.get("exp").asLong();
+
             } catch (IOException e) {
-                logger.error("Error while retrieve username.");
+                logger.error("Error while retrieve username/expiration date.");
                 e.printStackTrace();
             }
             User user = userRepository.findByName(username);
+            Date currentDate = new Date(System.currentTimeMillis());
+            Date expiredDate = new Date(TimeUnit.SECONDS.toMillis(expirationInMiliseconds));
+            if (expiredDate.before(currentDate)){
+                throw new ExpiredTokenException("Token expired.Log again.");
+            }
             if (user != null)
                 return jwtTokenProvider.createToken(user.getName(), user.getUserType().name());
             else
