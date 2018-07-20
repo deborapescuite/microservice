@@ -67,7 +67,7 @@ public class OrderService {
 
     public void delete(Integer id) {
         if (orderRepository.findById(id).isPresent()) {
-            logger.info("Delete order - id: " + id);
+            logger.info("DELETE  a order with id: " + id + " by user: " + SecurityContextHolder.getContext().getAuthentication().getName());
             orderRepository.deleteById(id);
         } else
             throw new OrderNotFoundException("Order id: " + id + " not found.Could not be deleted.");

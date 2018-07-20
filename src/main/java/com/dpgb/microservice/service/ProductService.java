@@ -6,6 +6,7 @@ import com.dpgb.microservice.repository.ProductRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class ProductService {
     }
 
     public void delete(Integer id) {
-        logger.info("Delete product id: " + id);
+        logger.info("DELETE  a product with id: " + id + " by user: " + SecurityContextHolder.getContext().getAuthentication().getName());
         if (productRepository.findById(id).isPresent()) {
             productRepository.deleteById(id);
         } else

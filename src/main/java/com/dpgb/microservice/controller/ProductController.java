@@ -22,7 +22,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class ProductController {
-    private static final Logger logger = LogManager.getLogger(ProductController.class);
 
     @Autowired
     ProductService productService;
@@ -31,7 +30,6 @@ public class ProductController {
     @RequestMapping(method = GET, value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Product getProduct(@PathVariable Integer id) {
-        logger.info("GET a product with id: " + id);
         return productService.findById(id);
     }
 
@@ -39,7 +37,6 @@ public class ProductController {
     @RequestMapping(method = GET, value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getAllProducts() {
-        logger.info("GET all products created.");
         return productService.findAll();
     }
 
@@ -47,7 +44,6 @@ public class ProductController {
     @RequestMapping(method = DELETE, value = "/products/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Integer id) {
-        logger.info("DELETE  a product with id: " + id + " by user: " + SecurityContextHolder.getContext().getAuthentication().getName());
         productService.delete(id);
     }
 
@@ -55,14 +51,12 @@ public class ProductController {
     @RequestMapping(method = PUT, value = "/products/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Product updateProduct(@PathVariable Integer id, @Valid @RequestBody Product updateProduct) {
-        logger.info("UPDATE/PUT  a product with id: " + id);
         return productService.update(id, updateProduct);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(method = POST, value = "/products", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product createProduct, UriComponentsBuilder ucb) {
-        logger.info("CREATE/POST  a new product.");
         Product product = productService.save(createProduct);
 
         HttpHeaders headers = new HttpHeaders();

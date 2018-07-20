@@ -18,7 +18,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class UserController {
-    private static final Logger logger = LogManager.getLogger(UserController.class);
 
     @Autowired
     UserService userService;
@@ -27,7 +26,6 @@ public class UserController {
     @RequestMapping(method = GET, value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@PathVariable Integer id) {
-        logger.info("GET a user with id: " + id);
         return userService.findById(id);
     }
 
@@ -35,7 +33,6 @@ public class UserController {
     @RequestMapping(method = GET, value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
-        logger.info("GET all users created.");
         return userService.findAll();
     }
 
@@ -43,7 +40,6 @@ public class UserController {
     @RequestMapping(method = DELETE, value = "/user/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer id) {
-        logger.info("DELETE  a user with id: " + id + " by user: " + SecurityContextHolder.getContext().getAuthentication().getName());
         userService.delete(id);
     }
 
@@ -51,7 +47,6 @@ public class UserController {
     @RequestMapping(method = PUT, value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public User updateUser(@PathVariable Integer id, @Valid @RequestBody User updatedUser) {
-        logger.info("UPDATE/PUT  a product with id: " + id);
         return userService.update(id, updatedUser);
     }
 
