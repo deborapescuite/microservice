@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,22 +31,21 @@ import java.util.List;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import javax.servlet.Filter;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(OrderController.class)
 public class OrderControllerTest {
     @Autowired
     private MockMvc mvc;
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private WebApplicationContext context;
-
-    @Autowired
-    private Filter springSecurityFilterChain;
 
     @MockBean
     OrderService orderService;
@@ -64,6 +63,11 @@ public class OrderControllerTest {
 
     @Before
     public void setUp() {
+
+        mvc = MockMvcBuilders
+                .webAppContextSetup(this.context)
+                .apply(springSecurity())
+                .build();
 
         Product product = new Product();
         product.setName("Plastic folder");
@@ -89,12 +93,6 @@ public class OrderControllerTest {
         order.setUserId(user.getId());
         order.setOrderItems(orderItemList);
 
-        mvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .addFilters(springSecurityFilterChain)
-                .build();
-
-
     }
 
     public byte[] serializeOrder(Order order) throws JsonProcessingException {
@@ -102,12 +100,14 @@ public class OrderControllerTest {
         System.out.println(mapper.writeValueAsString(order));
         return mapper.writeValueAsBytes(order);
     }
+
     @Test
-    @WithAnonymousUser
+    @WithMockUser(authorities = "CUSTOMER")
     public void createOrderWithSuccess() throws Exception {
         when(orderService.save(this.order)).thenReturn(this.order);
         mvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
                 .content(serializeOrder(this.order)))
                 .andExpect(status().isCreated());
 
@@ -115,7 +115,7 @@ public class OrderControllerTest {
 
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = "ADMIN")
     public void updateOrder() throws Exception {
 
         when(orderService.findById(1)).thenReturn(this.order);
@@ -123,11 +123,13 @@ public class OrderControllerTest {
         mvc.perform(
                 put("/order/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(serializeOrder(this.order)))
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @WithMockUser(authorities = {"ADMIN", "CUSTOMER"})
     public void getOrder() throws Exception {
         when(orderService.findById(1)).thenReturn(this.order);
 
@@ -139,6 +141,7 @@ public class OrderControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"ADMIN", "CUSTOMER"})
     public void getAllOrders() throws Exception {
         mvc.perform(get("/order")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -146,32 +149,20 @@ public class OrderControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = "ADMIN")
     public void deleteOrder() throws Exception {
         when(orderService.findById(1)).thenReturn(this.order);
         doNothing().when(orderService).delete(this.order.getId());
 
         mvc.perform(
                 delete("/order/{id}", this.order.getId())
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    public void createOrderWithUserNotFound() throws Exception {
-        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
-        orderItemList.add(orderItem);
-        Order newOrder = new Order();
-        newOrder.setId(1);
-        newOrder.setUserId(99999999);
-        newOrder.setOrderItems(orderItemList);
-
-        mvc.perform(post("/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(serializeOrder(newOrder)))
-                .andExpect(status().is5xxServerError());
-    }
-
-    @Test
+    @WithMockUser(authorities = {"ADMIN", "CUSTOMER"})
     public void getNotFoundOrder() throws Exception {
         when(orderService.findById(999)).thenThrow(OrderNotFoundException.class);
         mvc.perform(get("/order/{id}", 999)
@@ -180,10 +171,9 @@ public class OrderControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = "CUSTOMER")
     public void createOrderWithError() throws Exception {
         Order emptyOrder = new Order();
-        emptyOrder.setId(2);
-
 
         mvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
